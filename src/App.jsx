@@ -23,14 +23,17 @@ function deriveActivePlayer(gameTurns){
 }
 
 function App() {
-  const [gameTurns, setGameTurns] = useState([]);
+  const [gameTurns, setGameTurns] = useState([]); // gameTurns è, infine, l'unico elemento che comanda l'intero gioco
+
   // const [hasWinner, setHasWinner] = useState('false');
   // const [activePlayer, setActivePlayer] = useState('X');
   
   const activePlayer = deriveActivePlayer(gameTurns);
 
   // posso capire se un giocatore ha vinto dai dati di gameTurns, senza aggiungere nuovi State o logiche sconnesse da gameTurns
-  let gameBoard = initialGameBoard;
+  
+  let gameBoard = [...initialGameBoard.map(array => [...array])]; 
+  // creo un nuovo array senza sovrascrivere quello precedente, quindi i dati non rimangono salvati nell'array iniziale e posso riavviare il gioco correttamente
 
   for (const turn of gameTurns) {
       const {square, player} = turn;
@@ -69,6 +72,11 @@ function App() {
     });
   }
 
+  function handleRestartGame(){
+    setGameTurns([]);
+  }
+    
+
   return (<main>
     <div id="game-container">
       <ol id="players" className="highlight-player">
@@ -77,7 +85,7 @@ function App() {
         
         
       </ol>
-      {(winner || hasDraw) && <GameOver winner={winner}/>}
+      {(winner || hasDraw) && <GameOver winner={winner} onRestart={handleRestartGame}/>}
       <GameBoard onSelectSquare={handleSelectSquare} 
       board={gameBoard}
       />
